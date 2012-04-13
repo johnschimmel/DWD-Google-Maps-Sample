@@ -1,0 +1,22 @@
+<style>
+#map_canvas {
+    width:500px;
+    height:350px;
+}
+</style>
+
+
+<div class="row">
+    
+    <div class="column span8" id="map_canvas"></div>
+    <div class="column span4">Right Column</div>
+    
+</div>
+
+<script>
+
+    // myLocations is a javascript array of objects with location title and lat/lng position information
+    // receive JSON string from web.js convert to native Javascript object with the eval() function
+    myLocations = eval(<%- customLocationsJSON %>);
+
+</script>
