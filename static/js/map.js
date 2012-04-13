@@ -15,11 +15,13 @@ var initialize = function() {
     displayMarkers();
 }
 
+
+
 var displayMarkers = function() {
     
     for(i = 0; i<myLocations.length; i++) {
         
-        currLocation= myLocations[0];
+        currLocation= myLocations[i];
         
         // create info window
         var infowindow = new google.maps.InfoWindow({
@@ -49,6 +51,45 @@ var displayMarkers = function() {
         
     }
     
+}
+
+var displaySingleMarker = function(location) {
+    /*
+    location = {
+        title : 'ITP',
+        lat : 40.123,
+        lng : -70.43232
+    }
+    
+    */
+    
+    currLocation = location ;
+    
+    // create info window
+    var infowindow = new google.maps.InfoWindow({
+            content: "<h4>" + currLocation.title + "</h4>"
+        });
+    
+    // create the map marker
+    var tmpMarker = new google.maps.Marker({
+            position: new google.maps.LatLng( currLocation.lat, currLocation.lng), 
+            map: map,
+            title: currLocation.title
+        });
+    
+    // create click event - when marker is clicked open the 
+    google.maps.event.addListener(tmpMarker, 'click', function() {
+        
+        // open the marker info window
+        infowindow.open(map,tmpMarker);
+
+        // keep track of which marker was clicked on
+        currMarker = tmpMarker;
+    });
+        
+    // put new marker into the global mapMarkers array
+    mapMarkers.push(tmpMarker);
+  
 }
 
 

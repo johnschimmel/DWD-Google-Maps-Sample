@@ -35,13 +35,24 @@ app.configure('production', function(){
 
 app.get('/', function(request, response){
     
-    locations = [{
+    locations = [
+    {
         title : 'Interactive Telecommunications Program',
         position : {
             lat : 40.729291,
             lng : -73.993671
         }
-    }];
+    },
+    {
+        title : 'Washington Sq Park',
+        position : {
+            lat : 40.73088,
+            lng : -73.997327
+        }
+    }
+    
+    ];
+    
     templateData = {
         customLocationsJSON : JSON.stringify(locations)
     }
