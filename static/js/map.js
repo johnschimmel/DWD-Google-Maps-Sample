@@ -1,15 +1,19 @@
 var map;
-var mapMarkers = [];
+var bounds;
+var mapLocations = [];
 var currMarker;
+var currInfoWindow;
 
 var initialize = function() {
     var myOptions = {
       zoom: 15,
+      maxZoom:15,
       center: new google.maps.LatLng(40.729405, -73.99386),
       mapTypeId: google.maps.MapTypeId.ROADMAP
     };
 
     map = new google.maps.Map(document.getElementById('map_canvas'), myOptions);
+
     
     // now create markers from myLocations
     displayMarkers();
@@ -18,6 +22,8 @@ var initialize = function() {
 
 
 var displayMarkers = function() {
+    
+    bounds = new google.maps.LatLngBounds();
     
     for(i = 0; i<myLocations.length; i++) {
         
@@ -35,63 +41,41 @@ var displayMarkers = function() {
                 title: currLocation.title
             });
         
-        // create click event - when marker is clicked open the 
-        google.maps.event.addListener(tmpMarker, 'click', function() {
-            
-            // open the marker info window
-            infowindow.open(map,tmpMarker);
-
-            // keep track of which marker was clicked on
-            currMarker = tmpMarker;
-        });
-            
         // put new marker into the global mapMarkers array
-        mapMarkers.push(tmpMarker);
-
+        mapLocation = {
+            marker : tmpMarker,
+            infowindow : infowindow
+        };
+        
+        // adding current marker to bounds
+        bounds.extend(tmpMarker.position);
+        
+        // attach click event to marker, open info and close any open windows
+        setupInfoWindowClick(mapLocation);
+        
+        // put the whole location into mapLocations - if you need to get them later.
+        mapLocations.push(mapLocation);
         
     }
+    
+    // fit all the markers on the map.
+    map.fitBounds(bounds);
     
 }
 
-var displaySingleMarker = function(location) {
-    /*
-    location = {
-        title : 'ITP',
-        lat : 40.123,
-        lng : -70.43232
-    }
-    
-    */
-    
-    currLocation = location ;
-    
-    // create info window
-    var infowindow = new google.maps.InfoWindow({
-            content: "<h4>" + currLocation.title + "</h4>"
-        });
-    
-    // create the map marker
-    var tmpMarker = new google.maps.Marker({
-            position: new google.maps.LatLng( currLocation.lat, currLocation.lng), 
-            map: map,
-            title: currLocation.title
-        });
-    
-    // create click event - when marker is clicked open the 
-    google.maps.event.addListener(tmpMarker, 'click', function() {
-        
-        // open the marker info window
-        infowindow.open(map,tmpMarker);
-
-        // keep track of which marker was clicked on
-        currMarker = tmpMarker;
+// Pass in a location = {marker, infowindow}
+// this will attach a click event to the markers to open their infowindows
+function setupInfoWindowClick (location)
+{
+    // so marker is associated with the closure created for the listenMarker function call
+    google.maps.event.addListener(location.marker, 'click', function() {
+        if ( currInfoWindow ) {
+            currInfoWindow.close(); // close any existing windows
+        }
+        location.infowindow.open(map, location.marker); //open the infowindow
+        currInfoWindow = location.infowindow; //set this infowindow to the currInfoWindow
     });
-        
-    // put new marker into the global mapMarkers array
-    mapMarkers.push(tmpMarker);
-  
 }
-
 
 var loadScript = function() {
 
